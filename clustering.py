@@ -12,22 +12,20 @@ from sklearn.datasets import load_iris
 def calcula_distancia_intra_cluster(k,datos,centros_cluster):
     
     n=datos.shape[0]
-    distancia_al_centro=np.zeros((n,k))
-    #for i in range(k):
-        #print(centros_cluster)
-        #aux=np.linalg.norm(datos-centro,axis=1)
-        #print(aux)
-        #mat_distancias=datos-centros_cluster[i]
-        #distancia_al_centro+=np.linalg.norm(mat_distancias,axis=1)**2
-
-    print(distancia_al_centro)
-    #return
-    distancia_al_centro=np.zeros((n,k)) 
+    distancia_al_centro=np.zeros(k) 
     for i in range(k):
-        mat_distancias=datos-centros_cluster[i]
-        distancia_al_centro=np.linalg.norm(mat_distancias,axis=1)**2
-        print(distancia_al_centro)
+        for j in range(n):
+            centro=centros_cluster[i]
+            punto=datos[j]
+            distancia_al_centro[i]+=np.linalg.norm(centro-punto)**2 #Para cada dato calcula la norma(distancia) al centro (||uj-ci||**2)
 
+    return distancia_al_centro
+
+def calcula_j(distancia_al_centro):
+    aux=0
+    for i in range(distancia_al_centro.shape[0]):
+        aux+=distancia_al_centro[i]
+    return aux
 
 
 def kmeans(k,datos):
@@ -50,10 +48,8 @@ def kmeans(k,datos):
         viejos_centros=deepcopy(nuevos_centros)
         #Calcular distancia a centros
         for centro in range(k):
-            print(viejos_centros.shape)
             #                                               Resta en la matriz datos fila por fila por el vector centro(el actual)
             aux=np.linalg.norm(datos-viejos_centros[centro],axis=1) #axis=1 significa que va por filas para hacer la norma
-            #print(aux)
             mat_distancia_ccluster[:,centro]=np.linalg.norm(datos-viejos_centros[centro],axis=1) #axis=1 significa que va por filas para hacer la norma
 
         
@@ -65,9 +61,6 @@ def kmeans(k,datos):
                 if (mat_distancia_ccluster[i,j_centro]<mat_distancia_ccluster[i,min_centro]):
                     min_centro=j_centro
             vec_pertenencia[i]=min_centro
-
-        #O lo hacemos facil
-        #vec_pertenencia = np.argmin(mat_distancia_ccluster, axis = 1)
 
         #Recalculamos los centros de cluster
         acumulador_puntos=np.zeros((k,d))
@@ -85,8 +78,9 @@ def kmeans(k,datos):
                 nuevos_centros[i]=acumulador_puntos[i]/contador_puntos[i]
 
         error = np.linalg.norm(nuevos_centros - viejos_centros)    
-    print(nuevos_centros)
-    calcula_distancia_intra_cluster(k,datos,nuevos_centros)
+    
+    
+    return nuevos_centros
 
 def setup_kmeans():
     centro_1=np.array([1,1],dtype="int")
@@ -105,15 +99,14 @@ def setup_kmeans():
     #plt.scatter(datos[:,0],datos[:,1],s=7)
     
     k=3
-    kmeans(k,datos)
-
-
-
+    centros_cluster=kmeans(k,datos)
+    vec_distancia_a_centro=calcula_distancia_intra_cluster(k,datos,centros_cluster)
+    print("Lo puntos son ",centros_cluster)
+    print("La distancia intra cluster es ",calcula_j(vec_distancia_a_centro))
 
 def main():
     iris = load_iris()
     setup_kmeans()
     
 if __name__ == "__main__":
-
     main()  
