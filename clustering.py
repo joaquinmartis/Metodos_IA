@@ -7,6 +7,29 @@ from matplotlib import pyplot as plt
 from sklearn.datasets import load_iris
 
 
+
+
+def calcula_distancia_intra_cluster(k,datos,centros_cluster):
+    
+    n=datos.shape[0]
+    distancia_al_centro=np.zeros((n,k))
+    #for i in range(k):
+        #print(centros_cluster)
+        #aux=np.linalg.norm(datos-centro,axis=1)
+        #print(aux)
+        #mat_distancias=datos-centros_cluster[i]
+        #distancia_al_centro+=np.linalg.norm(mat_distancias,axis=1)**2
+
+    print(distancia_al_centro)
+    #return
+    distancia_al_centro=np.zeros((n,k)) 
+    for i in range(k):
+        mat_distancias=datos-centros_cluster[i]
+        distancia_al_centro=np.linalg.norm(mat_distancias,axis=1)**2
+        print(distancia_al_centro)
+
+
+
 def kmeans(k,datos):
     n=datos.shape[0]#N número de datos
     d=datos.shape[1]#D número de parametros
@@ -29,7 +52,10 @@ def kmeans(k,datos):
         for centro in range(k):
             print(viejos_centros.shape)
             #                                               Resta en la matriz datos fila por fila por el vector centro(el actual)
+            aux=np.linalg.norm(datos-viejos_centros[centro],axis=1) #axis=1 significa que va por filas para hacer la norma
+            #print(aux)
             mat_distancia_ccluster[:,centro]=np.linalg.norm(datos-viejos_centros[centro],axis=1) #axis=1 significa que va por filas para hacer la norma
+
         
         #Buscamos a que cluster pertenece cada punto
         vec_pertenencia=np.zeros(n)
@@ -60,15 +86,16 @@ def kmeans(k,datos):
 
         error = np.linalg.norm(nuevos_centros - viejos_centros)    
     print(nuevos_centros)
+    calcula_distancia_intra_cluster(k,datos,nuevos_centros)
 
 def setup_kmeans():
     centro_1=np.array([1,1],dtype="int")
     centro_2=np.array([8,1],dtype="int")
     centro_3=np.array([2,6],dtype="int")
 
-    nube_1=np.random.randn(200,2)
-    nube_2=np.random.randn(200,2)
-    nube_3=np.random.randn(200,2)
+    nube_1=np.random.randn(10,2)
+    nube_2=np.random.randn(10,2)
+    nube_3=np.random.randn(10,2)
 
     nube_1+=centro_1
     nube_2+=centro_2
@@ -79,7 +106,6 @@ def setup_kmeans():
     
     k=3
     kmeans(k,datos)
-    kmeans_profe(k,datos)
 
 
 
