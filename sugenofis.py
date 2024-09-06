@@ -4,7 +4,7 @@ Created on Wed May  6 17:56:16 2020
 
 @author: Daniel Albornoz
 
-Implementación similar a genfis2 de Matlab.
+Implementación similar a genfis de Matlab.
 Sugeno type FIS. Generado a partir de clustering substractivo.
 
 """
@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import MinMaxScaler
 import time
-from sub_clustering import subclust2
+from substractive_clustering import substractive_clustering
 
 def gaussmf(data, mean, sigma):
     return np.exp(-((data - mean)**2.) / (2 * sigma**2.))
@@ -51,7 +51,7 @@ class fis:
     def genfis(self, data, radii):
 
         start_time = time.time()
-        labels, cluster_center = subclust2(data, radii)
+        labels, cluster_center = substractive_clustering(data, radii)
 
         print("--- %s seconds ---" % (time.time() - start_time))
         n_clusters = len(cluster_center)
@@ -140,16 +140,16 @@ plt.xlim(-7,7)
 
 data = np.vstack((data_x, data_y)).T
 
-fis2 = fis()
-fis2.genfis(data, 1.1)
-fis2.viewInputs()
-r = fis2.evalfis(np.vstack(data_x))
+fis = fis()
+fis.genfis(data, 1.1)
+fis.viewInputs()
+r = fis.evalfis(np.vstack(data_x))
 
 plt.figure()
 plt.plot(data_x,data_y)
 plt.plot(data_x,r,linestyle='--')
 plt.show()
-fis2.solutions
+fis.solutions
 
 # r1 = data_x*-2.29539539+ -41.21850973
 # r2 = data_x*-15.47376916 -79.82911266
