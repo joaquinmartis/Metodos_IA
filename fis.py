@@ -4,8 +4,11 @@ import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import MinMaxScaler
 from substractive_clustering import substractive_clustering
+#from substractive_clustering_original import subclust2 as substractive_clustering
 from reglas_fis import FISRule
 from inputs_fis import FISInput
+#def gaussmf(data, mean, sigma):
+#        return np.exp(-((data - mean)**2.) / (2 * sigma**2.))
 
 class FIS:
     def __init__(self):
@@ -13,7 +16,9 @@ class FIS:
         self.memberfunc = []
         self.inputs = []
 
-    def __gaussmf(data, mean, sigma):
+
+    
+    def __gaussmf(self,data, mean, sigma):
         return np.exp(-((data - mean)**2.) / (2 * sigma**2.))
 
     def genFIS(self, data, radii):
@@ -41,6 +46,7 @@ class FIS:
         T = data[:,-1]
         #___________________________________________
         # MINIMOS CUADRADOS (lineal)
+        print(P)
         sigma = np.array([(i.maxValue-i.minValue)/np.sqrt(8) for i in self.inputs])
         f = [np.prod(self.__gaussmf(P,cluster,sigma),axis=1) for cluster in self.rules]
 
@@ -67,7 +73,8 @@ class FIS:
         #         A[:, jdx+kdx+1] = nivel_acti[:,jdx]/sumMu
 
         b = T
-
+        print(A)
+        print(T)
         solutions, residuals, rank, s = np.linalg.lstsq(A,b,rcond=None)
         self.solutions = solutions #.reshape(n_clusters,n_vars)
         print(solutions)

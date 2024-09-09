@@ -8,7 +8,7 @@ class FISInput:
         self.centroids = centroids
 
     
-    def __gaussmf(data, mean, sigma):
+    def __gaussmf(self,data, mean, sigma):
         return np.exp(-((data - mean)**2.) / (2 * sigma**2.))
 
     def view(self):
