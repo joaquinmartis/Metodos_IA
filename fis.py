@@ -24,6 +24,7 @@ class FIS:
     def genFIS(self, data, radii):
 
         start_time = time.time()
+        #Clustering con los datos y clasificacion de cada punto a un cluster
         labels, cluster_center = substractive_clustering(data, radii)
 
         print("--- %s seconds ---" % (time.time() - start_time))
@@ -42,26 +43,23 @@ class FIS:
     
     
     def entrenar(self, data):
-        P = data[:,:-1]
-        T = data[:,-1]
+        not_targets = data[:,:-1] #El ultimo elemento es el target. Agarra todos menos el ultimo
+        targets = data[:,-1] #Agarra el ultimo elemento
         #___________________________________________
         # MINIMOS CUADRADOS (lineal)
-        print(P)
         sigma = np.array([(i.maxValue-i.minValue)/np.sqrt(8) for i in self.inputs])
-        f = [np.prod(self.__gaussmf(P,cluster,sigma),axis=1) for cluster in self.rules]
+        f = [np.prod(self.__gaussmf(not_targets,cluster,sigma),axis=1) for cluster in self.rules]
 
         nivel_acti = np.array(f).T
-        print("nivel acti")
-        print(nivel_acti)
+
         sumMu = np.vstack(np.sum(nivel_acti,axis=1))
-        print("sumMu")
-        print(sumMu)
-        P = np.c_[P, np.ones(len(P))]
-        n_vars = P.shape[1]
+
+        not_targets = np.c_[not_targets, np.ones(len(not_targets))]
+        n_vars = not_targets.shape[1]
 
         orden = np.tile(np.arange(0,n_vars), len(self.rules))
         acti = np.tile(nivel_acti,[1,n_vars])
-        inp = P[:, orden]
+        inp = not_targets[:, orden]
 
 
         A = acti*inp/sumMu
@@ -72,12 +70,9 @@ class FIS:
         #         A[:, jdx+kdx] = nivel_acti[:,jdx]*P[:,kdx]/sumMu
         #         A[:, jdx+kdx+1] = nivel_acti[:,jdx]/sumMu
 
-        b = T
-        print(A)
-        print(T)
+        b = targets
         solutions, residuals, rank, s = np.linalg.lstsq(A,b,rcond=None)
         self.solutions = solutions #.reshape(n_clusters,n_vars)
-        print(solutions)
         return 0
 
     def evalFIS(self, data):
