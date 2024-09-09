@@ -45,6 +45,9 @@ class FIS:
     def entrenar(self, data):
         not_targets = data[:,:-1] #El ultimo elemento es el target. Agarra todos menos el ultimo
         targets = data[:,-1] #Agarra el ultimo elemento
+        #P=not_targets
+
+
         #___________________________________________
         # MINIMOS CUADRADOS (lineal)
         sigma = np.array([(i.maxValue-i.minValue)/np.sqrt(8) for i in self.inputs])
